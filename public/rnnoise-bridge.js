@@ -1,0 +1,4 @@
+class RNBridge extends AudioWorkletProcessor{
+ constructor(){super();this.frame=new Float32Array(480);this.at=0;this.ring=new Float32Array(16384);this.read=0;this.write=2048;this.port.onmessage=e=>{if(e.data.type==='dispose')this.disposed=true;else if(e.data.type==='frame'){const f=e.data.frame;for(let i=0;i<f.length;i++){this.ring[this.write]=f[i];this.write=(this.write+1)%this.ring.length;}}};}
+ process(inputs,outputs){if(this.disposed)return false;const input=inputs[0],out=outputs[0];for(let i=0;i<out[0].length;i++){this.frame[this.at++]=input.length>1?((input[0]?.[i]||0)+(input[1]?.[i]||0))*.5:input[0]?.[i]||0;if(this.at===480){this.port.postMessage({type:'frame',frame:this.frame},[this.frame.buffer]);this.frame=new Float32Array(480);this.at=0;}let v=0;if(this.read!==this.write){v=this.ring[this.read];this.read=(this.read+1)%this.ring.length;}for(const channel of out)channel[i]=v;}return true;}
+}registerProcessor('edub-rnnoise',RNBridge);

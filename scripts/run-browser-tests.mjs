@@ -1,0 +1,3 @@
+import {spawn} from 'node:child_process';
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1'],{stdio:'ignore'});
+try{let ready=false;for(let i=0;i<100;i++){try{const r=await fetch('http://127.0.0.1:5173');if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,100));}if(!ready)throw new Error('Vite did not start');for(const script of process.argv.slice(2)){await new Promise((resolve,reject)=>{const child=spawn(process.execPath,[script],{stdio:'inherit'});child.on('exit',code=>code===0?resolve():reject(new Error(`${script}: ${code}`)));});}}finally{server.kill();}

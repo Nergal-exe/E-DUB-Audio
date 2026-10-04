@@ -1,0 +1,4 @@
+import {audioColor} from '../audioColors';
+export function OutputMeter({levels}:{levels:number[]}){
+ return <aside className="output-meter panel" aria-label="Stereo çıkış seviyesi"><h2>Çıkış Seviyesi</h2><div className="meter-body"><div className="meter-columns">{['L','R'].map((label,index)=><div className="meter-channel" key={label}><div className="meter-track" role="meter" aria-label={label+' çıkış seviyesi'} aria-valuemin={-48} aria-valuemax={0} aria-valuenow={Math.max(-48,Math.min(0,levels[index]))}>{Array.from({length:64},(_,i)=>{const db=-i*48/64;return <i key={i} style={{background:levels[index]>=db?audioColor(1-i/63):'var(--meter-off)'}}/>;})}</div><span>{label}</span><output>{levels[index]<=-120?'−∞':levels[index].toFixed(1)}</output></div>)}</div><div className="meter-ticks">{[0,-6,-12,-18,-24,-30,-36,-42,-48].map(v=><span key={v}>{v}</span>)}</div></div><small>dBFS · Tepe seviyesi</small></aside>;
+}

@@ -1,0 +1,34 @@
+const { app, BrowserWindow, session, protocol, net, Tray, Menu, ipcMain } = require('electron');
+const path = require('node:path');
+const fs = require('node:fs');
+let mainWindow,tray,quitting=false;
+let lifecycle={startAtLogin:false,shutdownOnClose:true,hideOnStartup:false};
+const show=()=>{if(mainWindow&&!mainWindow.isDestroyed()){mainWindow.show();mainWindow.restore();mainWindow.focus();}};
+if(!app.requestSingleInstanceLock())app.quit();
+app.on('second-instance',show);
+app.on('before-quit',()=>{quitting=true;});
+const { pathToFileURL } = require('node:url');
+protocol.registerSchemesAsPrivileged([{scheme:'edub',privileges:{standard:true,secure:true,supportFetchAPI:true,corsEnabled:true,stream:true}}]);
+app.whenReady().then(() => {
+  const settingsPath=path.join(app.getPath('userData'),'lifecycle.json');
+  try{const saved=JSON.parse(fs.readFileSync(settingsPath,'utf8'));for(const key of Object.keys(lifecycle))if(typeof saved[key]==='boolean')lifecycle[key]=saved[key];}catch{}
+  const loginOptions={path:process.env.PORTABLE_EXECUTABLE_FILE||process.execPath,args:['--autostart']};
+  const state=()=>({...lifecycle,startAtLogin:app.isPackaged?app.getLoginItemSettings(loginOptions).openAtLogin:false,supported:app.isPackaged});
+  const trusted=event=>event.sender===mainWindow?.webContents&&event.senderFrame===event.sender.mainFrame&&event.senderFrame.url.startsWith('edub://app/');
+  ipcMain.handle('metrics:get',event=>{if(!trusted(event))throw new Error('Yetkisiz istek');return app.getAppMetrics().reduce((sum,p)=>sum+p.cpu.percentCPUUsage,0);});
+  ipcMain.handle('lifecycle:get',event=>{if(!trusted(event))throw new Error('Yetkisiz istek');return state();});
+  ipcMain.handle('lifecycle:set',(event,patch)=>{if(!trusted(event)||!patch||typeof patch!=='object')throw new Error('Geçersiz istek');const next={...lifecycle};for(const key of Object.keys(lifecycle)){if(key in patch){if(typeof patch[key]!=='boolean')throw new Error('Geçersiz ayar');next[key]=patch[key];}}if('startAtLogin' in patch&&next.startAtLogin!==state().startAtLogin){if(!app.isPackaged)throw new Error('Otomatik başlatma yalnızca Windows paketinde kullanılabilir.');app.setLoginItemSettings({...loginOptions,openAtLogin:next.startAtLogin});}fs.writeFileSync(settingsPath,JSON.stringify(next));lifecycle=next;return state();});
+  const root=path.resolve(__dirname,'../dist');
+  protocol.handle('edub',request=>{const url=new URL(request.url);if(url.hostname!=='app')return new Response('Forbidden',{status:403});let target;try{target=path.resolve(root,'.'+decodeURIComponent(url.pathname));}catch{return new Response('Bad path',{status:400});}if(target!==root&&!target.startsWith(root+path.sep))return new Response('Forbidden',{status:403});return net.fetch(pathToFileURL(target===root?path.join(root,'index.html'):target).href);});
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback, details) => callback(webContents.getURL().startsWith('edub://app/')&&(permission==='speaker-selection'||(permission==='media'&&details.mediaTypes?.length===1&&details.mediaTypes[0]==='audio'))));
+  session.defaultSession.setPermissionCheckHandler((webContents,permission,origin,details)=>!!webContents&&webContents.getURL().startsWith('edub://app/')&&(origin==='edub://app'||origin==='edub://app/')&&(permission==='speaker-selection'||(permission==='media'&&details.mediaType==='audio')));
+  const window = new BrowserWindow({ width: 1440, height: 940, minWidth: 800, minHeight: 650, title: 'E-DUB Audio', backgroundColor: '#101722', icon: path.join(__dirname, '../dist/icon.ico'), show:false,autoHideMenuBar: true, webPreferences: { preload:path.join(__dirname,'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true } });
+  mainWindow=window;
+  tray=new Tray(path.join(root,'icon.ico'));tray.setToolTip('E-DUB Audio');tray.setContextMenu(Menu.buildFromTemplate([{label:'E-DUB Audio’yu aç',click:show},{type:'separator'},{label:'Tamamen kapat',click:()=>app.quit()}]));tray.on('click',show);
+  window.on('close',event=>{if(!quitting&&!lifecycle.shutdownOnClose){event.preventDefault();window.hide();}});
+  window.once('ready-to-show',()=>{if(!lifecycle.hideOnStartup)window.show();});
+  window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  window.webContents.on('will-navigate', event => event.preventDefault());
+  window.loadURL('edub://app/index.html');
+});
+app.on('window-all-closed', () => app.quit());
