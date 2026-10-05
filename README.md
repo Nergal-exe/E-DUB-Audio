@@ -2,6 +2,8 @@
 
 Windows için Türkçe ses işleme uygulaması, sürüm 0.5.0. React + TypeScript, Tailwind CSS 4, shadcn/ui yaklaşımıyla Radix tabanlı erişilebilir bileşenler ve Electron kullanır.
 
+![E-DUB Audio — canlı mikrofon, spektrum ve stereo çıkış göstergeleri](docs/images/e-dub-audio-studio.png)
+
 ## İndir
 
 Windows x64 kurulum dosyası: [Son sürüm](https://github.com/Nergal-exe/E-DUB-Audio/releases/latest).
