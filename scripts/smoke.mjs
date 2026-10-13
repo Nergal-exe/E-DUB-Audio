@@ -22,7 +22,7 @@ try {
  await page.getByRole('button',{name:'Ses profilleri',exact:true}).click();
  assert.equal(await page.getByRole('heading',{name:'Test profili'}).count(),1);
  await page.getByRole('button',{name:'Ayarlar',exact:true}).click();await page.getByRole('button',{name:'Hakkında',exact:true}).click();
- await page.getByRole('dialog').getByText('Tablet/Yazı evi',{exact:false}).waitFor();
+ await page.getByRole('dialog').getByText('tablet evi',{exact:false}).waitFor();
  await page.screenshot({path:'test-results/about.png'});
  await page.getByRole('button',{name:'Genel',exact:true}).click();
  await page.getByRole('dialog').getByRole('button',{name:'Sıfırla',exact:true}).click();

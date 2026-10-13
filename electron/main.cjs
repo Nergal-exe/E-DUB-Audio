@@ -4,12 +4,15 @@ const fs = require('node:fs');
 let mainWindow,tray,quitting=false;
 let lifecycle={startAtLogin:false,shutdownOnClose:true,hideOnStartup:false};
 const show=()=>{if(mainWindow&&!mainWindow.isDestroyed()){mainWindow.show();mainWindow.restore();mainWindow.focus();}};
-if(!app.requestSingleInstanceLock())app.quit();
+// İkinci örnek, pencere ve tepsi simgesi oluşturmadan hemen kapanır; app.quit() eşzamansız olduğundan whenReady yine çalışırdı.
+const primaryInstance=app.requestSingleInstanceLock();
+if(!primaryInstance)app.exit(0);
 app.on('second-instance',show);
 app.on('before-quit',()=>{quitting=true;});
 const { pathToFileURL } = require('node:url');
 protocol.registerSchemesAsPrivileged([{scheme:'edub',privileges:{standard:true,secure:true,supportFetchAPI:true,corsEnabled:true,stream:true}}]);
 app.whenReady().then(() => {
+  if(!primaryInstance)return;
   const settingsPath=path.join(app.getPath('userData'),'lifecycle.json');
   try{const saved=JSON.parse(fs.readFileSync(settingsPath,'utf8'));for(const key of Object.keys(lifecycle))if(typeof saved[key]==='boolean')lifecycle[key]=saved[key];}catch{}
   const loginOptions={path:process.env.PORTABLE_EXECUTABLE_FILE||process.execPath,args:['--autostart']};

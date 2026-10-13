@@ -1,4 +1,9 @@
-# E-DUB Audio 0.5.0 — Son kontrol
+# E-DUB Audio 0.5.1 — Son kontrol
+
+## 0.5.1 kontrolleri (13 Ekim 2026)
+- `npm run build` ve `npm run dist:win`: TypeScript, üretim derlemesi ve x64 Setup.
+- DSP testi, tarayıcı testleri (smoke, settings, effects, device-regression, device-fallback, stereo) ve paketlenmiş uygulamada native, lifecycle ve monitor-ui testleri geçti.
+- Elle doğrulandı: sayı alanlarına negatif/ara değer yazma, birleşik EQ eğrisi ve kırpılma uyarısı, oynatma çubuğu ve sarma, sürükle-bırak, Boşluk kısayolu, mono dosyada iki kanallı ölçüm.
 
 ## Geçen kontroller
 - TypeScript ve üretim derlemesi.

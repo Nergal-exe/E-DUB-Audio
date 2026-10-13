@@ -1,12 +1,14 @@
 # E-DUB Audio
 
-Windows için Türkçe ses işleme uygulaması, sürüm 0.5.0. React + TypeScript, Tailwind CSS 4, shadcn/ui yaklaşımıyla Radix tabanlı erişilebilir bileşenler ve Electron kullanır.
+Windows için Türkçe ses işleme uygulaması, sürüm 0.5.1. React + TypeScript, Tailwind CSS 4, shadcn/ui yaklaşımıyla Radix tabanlı erişilebilir bileşenler ve Electron kullanır.
 
 ![E-DUB Audio — canlı mikrofon, spektrum ve stereo çıkış göstergeleri](docs/images/e-dub-audio-studio.png)
 
 ## İndir
 
 Windows x64 kurulum dosyası: [Son sürüm](https://github.com/Nergal-exe/E-DUB-Audio/releases/latest).
+
+Türkçe kullanım rehberi: [Programın amacı ve tüm özellikleri (PDF)](docs/E-DUB-Audio-Amac-ve-Ozellikler.pdf).
 
 ## Lisans
 
@@ -114,4 +116,21 @@ Canlı spektrum, stereo ölçerler ve ses göstergeleri ekolayzırın mor–turk
 
 ## 0.5.0 Setup
 
-`release/E-DUB Audio Setup 0.5.0.exe` x64 kurucusu uygulamayı Program Files altına, tüm kullanıcılar için kurar. Yönetici izni gerekir. Windows Ayarlar → Uygulamalar üzerinden kaldırılabilir. Kaldırma, mevcut kullanıcının kayıtlı uygulama verilerini ve başlangıç kaydını temizler; güncelleme verileri korur. Dışa aktarılmış yedekler ve kullanıcının ses/IR dosyaları korunur. Test kapsamı ve sınırları TEST-REPORT.md içindedir.
+`release/E-DUB Audio Setup <sürüm>.exe` x64 kurucusu uygulamayı Program Files altına, tüm kullanıcılar için kurar. Yönetici izni gerekir. Windows Ayarlar → Uygulamalar üzerinden kaldırılabilir. Kaldırma, mevcut kullanıcının kayıtlı uygulama verilerini ve başlangıç kaydını temizler; güncelleme verileri korur. Dışa aktarılmış yedekler ve kullanıcının ses/IR dosyaları korunur. Test kapsamı ve sınırları TEST-REPORT.md içindedir.
+
+## 0.5.1
+
+Hata düzeltmeleri:
+- Sayı alanlarına (ön kazanç, bant frekansı, Q, spektrum aralığı, atıllık süresi) ara değerler ve negatif sayılar yazılabilir; değer odak kaybında sınırlara uydurulur.
+- Mono dosyalarda sağ kanal göstergesi artık doğru ölçer; çıkış stereoya açılır.
+- Yüklenemeyen bir AI efekti (DeepFilterNet/RNNoise) zincirin geri kalanını kilitlemez; efekt kapatılır ve nedeni bildirilir.
+- Uygulamanın ikinci kopyası pencere veya ikinci tepsi simgesi oluşturmadan kapanır.
+- Profil silme onay ister; silinen profile bağlı cihaz kuralları ve varsayılan profil ayarı temizlenir.
+- Hakkında: ad açıklaması düzeltildi (Sümerce é “ev” + dub “tablet” → É-DUB “tablet evi”).
+
+Yenilikler:
+- Ekolayzır grafiği 10 bandın gerçek birleşik frekans yanıtını logaritmik eksende gösterir; noktaya tıklayarak bant seçilir. Toplam kazanç 0 dB'i aşarsa kırpılma uyarısı ve tek tıkla ön kazanç düzeltmesi.
+- Oynatma çubuğu: süre, konum sarma ve döngüde çalma.
+- Ses dosyasını pencereye sürükleyip bırakma.
+- Kısayollar: Boşluk oynat/duraklat (mikrofonda kulaklık izleme), ←/→ 5 sn sarma.
+- Efekt zincirinde kategori simgeleri; spektrum ölçümünde gereksiz yeniden çizimler azaltıldı.
