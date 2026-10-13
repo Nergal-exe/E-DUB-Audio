@@ -11,7 +11,8 @@
     "desktop": "npm run build && electron .",
     "dist:win": "npm run build && electron-builder --win nsis",
     "prebuild": "node scripts/vendor.mjs",
-    "test": "node scripts/smoke.mjs"
+    "test": "node scripts/smoke.mjs",
+    "guide": "node scripts/build-guide.mjs"
   },
   "dependencies": {
     "@lofcz/deepfilternet-web": "^0.1.0",

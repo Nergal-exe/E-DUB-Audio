@@ -25,6 +25,8 @@ Masaüstü uygulaması: `npm run desktop`
 
 Windows Setup oluşturma: `npm run dist:win` (çıktı: `release/`). Paket imzalı değildir.
 
+PDF kullanım rehberini yeniden üretme: `npm run guide` (çıktı: `docs/E-DUB-Audio-Amac-ve-Ozellikler.pdf`). Sürüm `package.json`, efektler `src/effects.ts`, ekran görüntüsü `docs/images/e-dub-audio-studio.png` dosyasından alınır. Python 3 ve `pip install reportlab` gerekir.
+
 ## Özellikler
 
 - Mikrofon giriş kazancı 0–24 dB; varsayılan +6 dB. Dosya sesini değiştirmez. Giriş kazancından sonra -1 dB örnek tepe koruması uygulanır; daha sonraki efektlerin kazancı ayrıca ayarlanmalıdır.
